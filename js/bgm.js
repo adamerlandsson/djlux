@@ -156,9 +156,12 @@ LUX.bgm = (() => {
       try { localStorage.setItem(KEY, enabled ? "on" : "off"); } catch {}
       label();
     });
-    // the browser only allows sound after the first click / key press
-    const start = () => { audio(); if (!timer) { newSection(); timer = setInterval(tick, 60); } };
-    for (const ev of ["pointerdown", "keydown"]) document.addEventListener(ev, start, { once: true, capture: true });
+    // start right away: if the browser allows sound already, it plays from the first second; otherwise the
+    // browser keeps it silent until the first click / tap / key press anywhere (js/sound.js), and it starts then
+    audio();
+    if (ac.state === "suspended") ac.resume().catch(() => {});
+    newSection();
+    timer = setInterval(tick, 60);
   }
 
   return { init, isOn: () => enabled, isAudible: () => audible };

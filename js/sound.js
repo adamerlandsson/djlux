@@ -3,13 +3,31 @@ window.LUX = window.LUX || {};
 
 LUX.sound = (() => {
   let ctx = null;
-  // browsers keep audio "suspended" until the user has clicked something, so wake it up on every interaction
+  // browsers keep audio "suspended" until the user has clicked something, so wake it up on every interaction.
+  // Different browsers accept different events as "the user did something" (Safari and phones want click /
+  // touchend / mouseup, not pointerdown), so listen to all of them – the first one that counts starts the sound.
   function audio() {
     ctx ??= new (window.AudioContext || window.webkitAudioContext)();
-    if (ctx.state === "suspended") ctx.resume();
+    if (ctx.state === "suspended") ctx.resume().catch(() => {});
     return ctx;
   }
-  for (const ev of ["pointerdown", "keydown"]) document.addEventListener(ev, () => audio(), { capture: true });
+  let unlocked = false;
+  function unlock() {
+    if (unlocked) return;
+    const ac = audio();
+    // iOS: playing a tiny silent sound inside the click is what really switches the audio on
+    try {
+      const s = ac.createBufferSource();
+      s.buffer = ac.createBuffer(1, 1, ac.sampleRate);
+      s.connect(ac.destination);
+      s.start(0);
+    } catch {}
+    if (ac.state === "running") unlocked = true;
+    else ac.resume().then(() => { unlocked = ac.state === "running"; }).catch(() => {});
+  }
+  for (const ev of ["pointerdown", "pointerup", "mousedown", "mouseup", "touchstart", "touchend", "click", "keydown"]) {
+    document.addEventListener(ev, unlock, { capture: true, passive: true });
+  }
 
   const noiseCache = {};
   function noiseBuffer(seconds) {
