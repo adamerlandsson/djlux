@@ -1,0 +1,42 @@
+DJ.LUX 🎧🎿
+===========
+
+SLIK SPELAR DU (ingenting å installere)
+1. Pakk ut zip-fila (høgreklikk → «Pakk ut alle» på Windows, dobbeltklikk på Mac).
+2. Opne mappa DJ.LUX.
+3. Dobbeltklikk på  index.html
+   Spelet opnar seg i nettlesaren (Chrome, Edge, Firefox eller Safari).
+4. Klikk ein stad i spelet for å få lyd.
+
+Første gong startar ein guide som viser alt i spelet (du kan lukke han med ✖).
+Du finn han igjen under «❓ Guide» øvst.
+
+LAGRING
+- Spelet lagrar AUTOMATISK medan du spelar («💾 Lagra automatisk» øvst).
+  Bruk same nettlesar og same mappe neste gong, så held du fram der du slapp.
+- Vil du ta vare på framgangen (eller spele vidare på ein annan PC)?
+  Trykk «⬇️ Lagre til fil» – då får du ei lita fil. Med «⬆️ Hent fil» held du fram frå ho.
+
+VIL DU HA ANNA MED EKTE KI-HJERNE? (valfritt)
+Treng: Python 3 og Claude Code (logga inn med din eigen Claude-konto).
+  Windows: dobbeltklikk  start-djlux.bat
+  Mac:     opne Terminal i mappa og skriv  ./start-djlux.sh
+Spelet opnar seg på http://localhost:8642. La det svarte vindauget stå ope medan du spelar.
+NB: denne versjonen har si eiga lagring. Flytt framgangen med «⬇️ Lagre til fil» og «⬆️ Hent fil».
+Meir hjelp: README.md
+
+-----------------------------------------------------------------
+
+HOW TO PLAY (nothing to install)
+1. Unzip the file.
+2. Open the DJ.LUX folder.
+3. Double-click  index.html  – the game opens in your web browser.
+4. Click somewhere in the game to turn on the sound.
+
+A guide that shows everything starts the first time (close it with ✖, reopen with «❓ Guide»).
+
+SAVING
+- The game saves AUTOMATICALLY in your browser while you play. Use the same browser and
+  folder next time and you continue where you left off.
+- To keep a backup (or continue on another computer): press «⬇️ Lagre til fil» to download
+  a small save file, and «⬆️ Hent fil» to load it again.

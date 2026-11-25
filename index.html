@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DJ.LUX</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%8E%A7%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Shown only if the game's files didn't load (e.g. index.html opened from INSIDE the zip on Windows).
+       js/main.js removes it as soon as the game starts. Inline styles, because style.css may not have loaded. -->
+  <div id="unzip-warning" style="background:#c9302c;color:#fff;font:bold 20px/1.5 Arial,sans-serif;padding:24px;margin:16px;border:6px solid #000">
+    ⚠️ Spelet har ikkje lasta skikkeleg / The game didn't load properly.<br><br>
+    Truleg er zip-fila ikkje pakka ut. Gjer slik:<br>
+    1. Høgreklikk på zip-fila → «Pakk ut alle…» → «Pakk ut».<br>
+    2. Opne den nye mappa <b>DJ.LUX</b>.<br>
+    3. Dobbeltklikk på <b>index.html</b> i den mappa.<br><br>
+    <span style="font-weight:normal">The zip file is probably not unzipped: right-click it → "Extract All…", open the new DJ.LUX folder,
+    and double-click index.html there.</span>
+  </div>
+  <div id="app">
+    <header>
+      <h1>DJ.LUX</h1>
+      <span id="acronym">Dansegulvets Juling-Leverandør · Laussnø Under X-mas</span>
+      <select id="timetravel" title="Tidsreise – test timeplanen">
+        <option value="real">⏰ Ekte tid</option>
+        <option value="1-18.75">Måndag 18:45 (sirkeltrening)</option>
+        <option value="2-12">Tysdag 12:00 (Skal vi danse)</option>
+        <option value="3-13">Onsdag 13:00 (skule)</option>
+        <option value="4-22">Torsdag 22:00 (TF-pils på Tyven)</option>
+        <option value="5-17">Fredag 17:00 (heime)</option>
+        <option value="6-20">Laurdag 20:00 (vors)</option>
+        <option value="0-13">Søndag 13:00 (fyllesjuk)</option>
+        <option value="1-4">Måndag 04:00 (søv)</option>
+      </select>
+      <button id="music-toggle" type="button" title="Bakgrunnsmusikk">🎵 Musikk</button>
+      <span id="brain-badge" title="Kva hjerne som snakkar">🧠 offline</span>
+    </header>
+    <div id="clock-row">
+      <div id="clock"></div>
+      <div id="savebar">
+        <span id="save-status">💾 Lagra automatisk</span>
+        <button id="save-export" type="button" title="Last ned framgangen som ei fil (backup, eller for å spele vidare på ein annan PC)">⬇️ Lagre til fil</button>
+        <button id="save-import" type="button" title="Hent framgang frå ei lagringsfil">⬆️ Hent fil</button>
+        <button id="guide-btn" type="button" title="Vis guiden som forklarer alt i spelet">❓ Guide</button>
+        <input id="save-file" type="file" accept=".json,application/json" hidden>
+      </div>
+    </div>
+
+    <main>
+      <section id="stage">
+        <canvas id="scene" width="640" height="400"></canvas>
+        <div id="hotspots"></div>
+        <div id="anna-wrap">
+          <img id="anna" src="assets/sprites/kjole_gronn/base.png" alt="Anna">
+        </div>
+        <div id="bubble" class="hidden"></div>
+        <div id="fx"></div>
+        <div id="fact" title="Dagens Hadi-fakta"></div>
+        <div id="game-layer" class="hidden"></div>
+        <div id="overlay" class="hidden">
+          <div class="ov-box">
+            <div class="ov-head"><h2></h2><button class="ov-close" title="Lukk">✖</button></div>
+            <div class="ov-body"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside id="panel">
+        <div class="meters">
+          <div class="wallet"><span id="coins">🪙 0</span><span id="djlevel" title="DJ-nivå">🎧 1</span><span id="skicount" title="Ting i SKI-magasinet">🎿 0</span></div>
+          <div class="meter" data-key="mood"><label>HUMØR</label><div class="bar"><i></i></div></div>
+          <div class="meter" data-key="festlyst"><label>FESTLYST</label><div class="bar"><i></i></div></div>
+          <div class="meter" data-key="dialekt"><label>DIALEKT</label><div class="bar"><i></i></div></div>
+          <div class="meter" data-key="adam"><label>ADAM-O-METER</label><div class="bar"><i></i></div></div>
+          <div class="meter" data-key="dj"><label>DJ-SKILLS</label><div class="bar"><i></i></div></div>
+        </div>
+
+        <div id="log"></div>
+
+        <form id="chat">
+          <input id="msg" autocomplete="off" placeholder="Sei noko til Anna...">
+          <button>Send</button>
+        </form>
+
+        <div class="actions">
+          <button data-action="school">📚 Skule</button>
+          <button data-action="dj">🎧 DJ</button>
+          <button data-action="adam">🇸🇪 Spør om Adam</button>
+          <button data-action="clothes">👗 Skift klede</button>
+          <button data-action="games">🎮 Spel</button>
+          <button data-action="study">📖 Studer</button>
+          <button data-action="magazine">🎿 SKI-magasin</button>
+          <button data-action="shop">🛒 Butikk</button>
+        </div>
+        <div id="achievements"></div>
+      </aside>
+    </main>
+  </div>
+  <div id="toast" class="hidden"></div>
+
+  <!-- Sprites that exist (written by tools/build_sprites.py) -->
+  <script src="assets/sprites/manifest.js"></script>
+
+  <!-- Content: edit these files to change what Anna says and does -->
+  <script src="content/phrases.js"></script>
+  <script src="content/reactions.js"></script>
+  <script src="content/schedule.js"></script>
+  <script src="content/outfits.js"></script>
+  <script src="content/shop.js"></script>
+  <script src="content/dj.js"></script>
+  <script src="content/story.js"></script>
+  <script src="content/people.js"></script>
+  <script src="content/adam.js"></script>
+  <script src="content/convo.js"></script>
+  <script src="content/tutorial.js"></script>
+  <script src="content/minigames.js"></script>
+  <script src="content/house.js"></script>
+
+  <script src="js/ui.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/scene-hd.js"></script>
+  <script src="js/scene.js"></script>
+  <script src="js/brain-scripted.js"></script>
+  <script src="js/brain-claude.js"></script>
+  <script src="js/room.js"></script>
+  <script src="js/shop.js"></script>
+  <script src="js/story.js"></script>
+  <script src="js/people.js"></script>
+  <script src="js/adam.js"></script>
+  <script src="js/convo.js"></script>
+  <script src="js/savefile.js"></script>
+  <script src="js/tutorial.js"></script>
+  <script src="js/music.js"></script>
+  <script src="js/bgm.js"></script>
+  <script src="js/games/dj.js"></script>
+  <script src="js/games/powder.js"></script>
+  <script src="js/games/cheat.js"></script>
+  <script src="js/games/boss.js"></script>
+  <script src="js/games/teacher.js"></script>
+  <script src="js/games/minigames.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
